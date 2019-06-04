@@ -446,6 +446,89 @@ public protocol AMClockViewDelegate: class {
             }
         }
     }
+
+    private func prepareTapGesture() {
+        
+        tapMinuteLayer = CAShapeLayer()
+        guard let tapMinuteLayer = tapMinuteLayer else {
+
+            return
+        }
+
+        tapHourLayer = CAShapeLayer()
+        guard let tapHourLayer = tapHourLayer else {
+
+            return
+        }
+
+        guard let drawLayer = drawLayer else {
+
+            return
+        }
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.tapAction(gesture:)))
+        clockView.addGestureRecognizer(tap)
+        let radius:CGFloat = clockView.frame.width/2
+        let centerPoint = CGPoint(x: radius, y: radius)
+        let smallRadius:CGFloat = radius/2
+
+        let path1 = UIBezierPath(ovalIn: CGRect(x: centerPoint.x - radius,
+                                                y: centerPoint.y - radius,
+                                                width: radius * 2,
+                                                height: radius * 2))
+        tapMinuteLayer.frame = drawLayer.bounds
+        drawLayer.insertSublayer(tapMinuteLayer, at: 0)
+        tapMinuteLayer.strokeColor = UIColor.clear.cgColor
+        tapMinuteLayer.fillColor = clockColor.cgColor
+        tapMinuteLayer.path = path1.cgPath
+
+        let path2 = UIBezierPath(ovalIn: CGRect(x: centerPoint.x - smallRadius,
+                                                y: centerPoint.y - smallRadius,
+                                                width: smallRadius * 2,
+                                                height: smallRadius * 2))
+        tapHourLayer.frame = drawLayer.bounds
+        drawLayer.addSublayer(tapHourLayer)
+        tapHourLayer.strokeColor = centerCircleLineColor.cgColor
+        tapHourLayer.fillColor = UIColor.clear.cgColor;
+        tapHourLayer.path = path2.cgPath
+    }
+    
+    //MARK: Gesture Action
+    @objc func tapAction(gesture: UITapGestureRecognizer) {
+
+        guard let tapMinuteLayer = tapMinuteLayer else {
+
+            return
+        }
+
+        guard let tapHourLayer = tapHourLayer else {
+
+            return
+        }
+
+        let point = gesture.location(in: clockView)
+        /// 編集モードを設定
+        if UIBezierPath(cgPath: tapHourLayer.path!).contains(point) {
+            editType = .hour
+            startAngle = compensationHourAngle()
+            /// 時間を設定
+            editTimeHour(point: point)
+            
+        } else
+            
+            if UIBezierPath(cgPath: tapMinuteLayer.path!).contains(point) {
+                editType = .minute
+                dateFormatter.dateFormat = AMCVDateFormat.minute.rawValue
+                startAngle = caluculateAngle(minute: dateFormatter.string(from: currentDate))
+                /// 分を設定
+                editTimeMinute(point: point)
+                
+            } else {
+                
+                editType = .none
+        }
+
+    }
     
     private func editTimeHour(point: CGPoint) {
         let radian:Float = calculateRadian(point: point)
@@ -687,6 +770,7 @@ public protocol AMClockViewDelegate: class {
         }
         
         preparePanGesture()
+        prepareTapGesture()
         
         if hourHandImage == nil {
             prepareHourHandLayer()
