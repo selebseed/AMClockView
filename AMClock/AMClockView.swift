@@ -62,6 +62,10 @@ public protocol AMClockViewDelegate: class {
     private var panHourLayer:CAShapeLayer?
     
     private var panMinuteLayer:CAShapeLayer?
+
+    private var tapHourLayer:CAShapeLayer?
+    
+    private var tapMinuteLayer:CAShapeLayer?
     
     private let selectedTimeLabel = UILabel()
     
