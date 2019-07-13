@@ -696,26 +696,26 @@ public protocol AMClockViewDelegate: class {
         components.minute = minute
         currentDate = calendar.date(from: components)!
         
-        if endAngle < startAngle {
+        // if endAngle < startAngle {
             
-            // 12時またぐ場合
-            let gap = startAngle - endAngle
-            let angle270 = Float(Double.pi/2) * 3
-            if gap > angle270 {
+        //     // 12時またぐ場合
+        //     let gap = startAngle - endAngle
+        //     let angle270 = Float(Double.pi/2) * 3
+        //     if gap > angle270 {
                 
-                currentDate = currentDate.addingTimeInterval(60 * 60)// 1時間後
-            }
+        //         currentDate = currentDate.addingTimeInterval(60 * 60)// 1時間後
+        //     }
             
-        } else {
+        // } else {
             
-            // 12時またぐ場合
-            let gap = endAngle - startAngle
-            let angle270 = Float(Double.pi/2) * 3
-            if gap > angle270 {
+        //     // 12時またぐ場合
+        //     let gap = endAngle - startAngle
+        //     let angle270 = Float(Double.pi/2) * 3
+        //     if gap > angle270 {
                 
-                currentDate = currentDate.addingTimeInterval(-60 * 60)// 1時間前
-            }
-        }
+        //         currentDate = currentDate.addingTimeInterval(-60 * 60)// 1時間前
+        //     }
+        // }
         
         //drawHourHandLayer(angle: compensationHourAngle())
         changedTime()
